@@ -5,16 +5,13 @@ namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
 {
-    private List<Comment> comments;
+    List<Comment> comments = new List<Comment>();
 
     public CommentInMemoryRepository()
     {
-        comments = new List<Comment>
-        {
-            new Comment { Id = 1, Body = "This is the first comment."},
-            new Comment { Id = 2, Body = "This is the second comment."},
-            new Comment { Id = 3, Body = "This is a comment on the second post."}
-        };
+        _ = AddAsync(new Comment("Hello World.", 1, 1)).Result;
+        _ = AddAsync(new Comment("Good Post.", 3, 2)).Result;
+        _ = AddAsync(new Comment("I don't like it.", 2, 3)).Result;
     }
     
     public Task<Comment> AddAsync(Comment comment)
@@ -64,5 +61,11 @@ public class CommentInMemoryRepository : ICommentRepository
     public IQueryable<Comment> GetMany()
     {
         return comments.AsQueryable();
+    }
+    
+    public Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
+    {
+        var filteredComments = comments.Where(c => c.PostId == postId).ToList();
+        return Task.FromResult(filteredComments);
     }
 }

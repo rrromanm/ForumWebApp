@@ -5,16 +5,13 @@ namespace InMemoryRepositories;
 
 public class UserInMemoryRepository : IUserRepository
 {
-    private List<User> users;
+    List<User> users = new List<User>();
 
     public UserInMemoryRepository()
     {
-        users = new List<User>
-        {
-            new User { Id = 1, Username = "john_doe", Password = "password123" },
-            new User { Id = 2, Username = "jane_smith", Password = "securepass456" },
-            new User { Id = 3, Username = "admin", Password = "adminpass789" }
-        };
+        _ = AddAsync(new User("admin", "admin")).Result;
+        _ = AddAsync(new User("jane_smith", "securepass456")).Result;
+        _ = AddAsync(new User("jhon_doe", "pass1234")).Result;
     }
     
     public Task<User> AddAsync(User user)

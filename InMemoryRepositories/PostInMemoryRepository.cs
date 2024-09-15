@@ -5,16 +5,13 @@ namespace InMemoryRepositories;
 
 public class PostInMemoryRepository : IPostRepository
 {
-    private List<Post> posts;
+    List<Post> posts = new List<Post>();
     
     public PostInMemoryRepository()
     {
-        posts = new List<Post>
-        {
-            new Post { Id = 1, Title = "First Post", Body = "This is the body of the first post." },
-            new Post { Id = 2, Title = "Second Post", Body = "This is the body of the second post." },
-            new Post { Id = 3, Title = "Third Post", Body = "This is the body of the third post." }
-        };
+        _ = AddAsync(new Post("First Post", "This is the body of the first post.")).Result;
+        _ = AddAsync(new Post("Second Post", "This is the body of the second post.")).Result;
+        _ = AddAsync(new Post("Third Post", "This is the body of the third post.")).Result;
     }
     
     public Task<Post> AddAsync(Post post)
@@ -65,4 +62,5 @@ public class PostInMemoryRepository : IPostRepository
     {
         return posts.AsQueryable();
     }
+    
 }
