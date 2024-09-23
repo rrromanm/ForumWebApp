@@ -1,14 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using CLI.UI;
-using InMemoryRepositories;
+﻿using CLI.UI;
+using FileRepositories;
 using RepositoryContracts;
 
 Console.WriteLine("Starting forum app...");
 
-IUserRepository userRepository = new UserInMemoryRepository();
-ICommentRepository commentRepository = new CommentInMemoryRepository();
-IPostRepository postRepository = new PostInMemoryRepository();
+IUserRepository userRepository = new UserFileRepository();
+ICommentRepository commentRepository = new CommentFileRepository();
+IPostRepository postRepository = new PostFileRepository();
 
 CliApp cliApp = new CliApp(userRepository, postRepository, commentRepository );
 await cliApp.StartAsync();
