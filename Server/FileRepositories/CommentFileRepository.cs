@@ -6,13 +6,14 @@ namespace FileRepositories;
 
 public class CommentFileRepository : ICommentRepository
 {
-    private readonly string _filePath = "comments.json";
+    private readonly string filePath =  "comments.json";
+
     
     public CommentFileRepository()
     {
-        if (!File.Exists(_filePath))
+        if (!File.Exists(filePath))
         {
-            File.WriteAllText(_filePath, "[]");
+            File.WriteAllText(filePath, "[]");
         }
     }
     
@@ -30,14 +31,14 @@ public class CommentFileRepository : ICommentRepository
 
     private async Task<List<Comment>> LoadCommentsAsync()
     {
-        string commentAsJson = await File.ReadAllTextAsync(_filePath);
-        return JsonSerializer.Deserialize<List<Comment>>(commentAsJson);
+        string commentAsJson = await File.ReadAllTextAsync(filePath);
+        return JsonSerializer.Deserialize<List<Comment>>(commentAsJson) ?? new List<Comment>();
     }
 
     private async Task SaveCommentsAsync(List<Comment> comments)
     {
         string commentAsJson = JsonSerializer.Serialize(comments);
-        await File.WriteAllTextAsync(_filePath, commentAsJson);
+        await File.WriteAllTextAsync(filePath, commentAsJson);
     }
     
     public async Task<Comment> AddAsync(Comment comment)
@@ -90,8 +91,8 @@ public class CommentFileRepository : ICommentRepository
 
     public IQueryable<Comment> GetMany()
     {
-        string commentAsJson = File.ReadAllText(_filePath);
-        List<Comment> comments = JsonSerializer.Deserialize<List<Comment>>(commentAsJson);
+        string commentAsJson = File.ReadAllTextAsync(filePath).Result;
+        List<Comment> comments = JsonSerializer.Deserialize<List<Comment>>(commentAsJson) !;
         return comments.AsQueryable();
     }
 

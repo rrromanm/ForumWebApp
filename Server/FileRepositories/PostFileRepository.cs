@@ -7,6 +7,7 @@ namespace FileRepositories;
 public class PostFileRepository : IPostRepository
 {
     private readonly string filePath = "posts.json";
+
     
     public PostFileRepository()
     {
@@ -18,7 +19,7 @@ public class PostFileRepository : IPostRepository
     private async Task<List<Post>> LoadPostsAsync()
     {
         string postAsJson = await File.ReadAllTextAsync(filePath);
-        return JsonSerializer.Deserialize<List<Post>>(postAsJson);
+        return JsonSerializer.Deserialize<List<Post>>(postAsJson) ?? new List<Post>();
     }
     private async Task SavePostsAsync(List<Post> posts)
     {
@@ -86,8 +87,8 @@ public class PostFileRepository : IPostRepository
 
     public IQueryable<Post> GetMany()
     {
-        string postAsJson = File.ReadAllText(filePath);
-        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson);
+        string postAsJson = File.ReadAllTextAsync(filePath).Result;
+        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson) !;
         return posts.AsQueryable();
     }
 }
