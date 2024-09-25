@@ -12,11 +12,18 @@ public class CreatePostView
         _postRepository = postRepository;
     }
 
-    public async Task addPostAsync(string title, string content)
+    public async Task addPostAsync()
     {
-        Post? post = new Post(title, content);
-        await _postRepository.AddAsync(post);
+        Console.Clear();
+        Console.WriteLine("Enter title: ");
+        var title = Console.ReadLine();
+        Console.WriteLine("Enter content: ");
+        var content = Console.ReadLine();
         
-        Console.WriteLine($"Post '{title}' has been created successfully.");
+        var newPost = new Post(title,content);
+        await _postRepository.AddAsync(newPost);
+        
+        Console.WriteLine($"Post with Id: {newPost.Id} has been created !");
+        
     }
 }

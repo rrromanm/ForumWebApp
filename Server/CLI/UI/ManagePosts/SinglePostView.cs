@@ -14,9 +14,14 @@ public class SinglePostView
         _commentRepository = commentRepository;
     }
     
-    public async Task DisplayPostAsync(int postId)
+    public async Task DisplayPostAsync()
     { 
-        Post? post = await _postRepository.GetSingleAsync(postId);
-        Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}");
+        Console.Clear();
+        Console.WriteLine("Enter post ID which you would like to view: ");
+        if (int.TryParse(Console.ReadLine(), out int postIdToView))
+        {
+            Post? post = await _postRepository.GetSingleAsync(postIdToView);
+            Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Content: {post.Body}");
+        }
     }
 }

@@ -12,10 +12,28 @@ public class AddCommentView
         _commentRepository = commentRepository;
     }
     
-    public async Task addCommentAsync(string body, int userId, int postID)
+    public async Task addCommentAsync()
     {
-        Comment comment = new Comment(body, userId, postID);
-        await _commentRepository.AddAsync(comment);
-        Console.WriteLine($"Comment created successfully on post: {postID} by {userId}.");
+        Console.Write("Enter Comment Content: ");
+        var body = Console.ReadLine();
+        
+        Console.WriteLine("Enter the post ID you want to comment on:");
+        if (!int.TryParse(Console.ReadLine(), out int postId))
+        {
+            Console.WriteLine("Invalid post ID.");
+            return;
+        }
+
+        Console.Write("Enter user ID: ");
+        if (!int.TryParse(Console.ReadLine(), out int userId))
+        {
+            Console.WriteLine("Invalid user ID.");
+            return;
+        }
+
+        var comment = new Comment(body, postId, userId);
+        var createdComment = await _commentRepository.AddAsync(comment);
+
+        Console.WriteLine($"Comment added successfully with ID: {createdComment.Id}");
     }
 }

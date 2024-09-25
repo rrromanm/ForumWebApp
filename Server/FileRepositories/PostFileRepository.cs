@@ -6,25 +6,26 @@ namespace FileRepositories;
 
 public class PostFileRepository : IPostRepository
 {
-    private readonly string filePath = "posts.json";
+    private readonly string FilePath = "posts.json";
 
     
     public PostFileRepository()
     {
-        if (!File.Exists(filePath))
+        if (!File.Exists(FilePath))
         {
-            File.WriteAllText(filePath, "[]");
+            File.WriteAllText(FilePath, "[]");
         }
     }
     private async Task<List<Post>> LoadPostsAsync()
     {
-        string postAsJson = await File.ReadAllTextAsync(filePath);
-        return JsonSerializer.Deserialize<List<Post>>(postAsJson) ?? new List<Post>();
+        string postAsJson = await File.ReadAllTextAsync(FilePath);
+        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson)!;
+        return posts;
     }
     private async Task SavePostsAsync(List<Post> posts)
     {
-        string postAsJson = JsonSerializer.Serialize(posts);
-        await File.WriteAllTextAsync(filePath, postAsJson);
+        string postAsJson = JsonSerializer.Serialize(posts, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(FilePath, postAsJson);
     }
     public async Task<Post> FindPostById(int id)
     {
@@ -39,8 +40,7 @@ public class PostFileRepository : IPostRepository
     public async Task<Post> AddAsync(Post post)
     {
         List<Post> posts = await LoadPostsAsync();
-        int maxID = posts.Count > 0 ? posts.Max(p => p.Id) : 1;
-        post.Id = maxID + 1;
+        post.Id = posts.Count > 0 ? posts.Max(p => p.Id) + 1 : 1;
         posts.Add(post);
         await SavePostsAsync(posts);
         return post;
@@ -49,7 +49,7 @@ public class PostFileRepository : IPostRepository
     public async Task UpdateAsync(Post post)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? existingPost = posts.FirstOrDefault(p => p.Id == post.Id);
+        Post? existingPost = posts.SingleOrDefault(p => p.Id == post.Id);
         if (existingPost is null)
         {
             throw new InvalidOperationException($"Post with ID '{post.Id}' not found.");
@@ -64,11 +64,12 @@ public class PostFileRepository : IPostRepository
     public async Task DeleteAsync(int id)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? postToRemove = posts.FirstOrDefault(p => p.Id == id);
+        Post? postToRemove = posts.SingleOrDefault(p => p.Id == id);
         if (postToRemove is null)
         {
             throw new InvalidOperationException($"Post with ID '{id}' not found.");
         }
+        
         posts.Remove(postToRemove);
         await SavePostsAsync(posts);
     }
@@ -76,7 +77,7 @@ public class PostFileRepository : IPostRepository
     public async Task<Post> GetSingleAsync(int id)
     {
         List<Post> posts = await LoadPostsAsync();
-        Post? post = posts.FirstOrDefault(p => p.Id == id);
+        Post? post = posts.SingleOrDefault(p => p.Id == id);
         if (post is null)
         {
             throw new InvalidOperationException($"Post with ID '{id}' not found.");
@@ -87,8 +88,6 @@ public class PostFileRepository : IPostRepository
 
     public IQueryable<Post> GetMany()
     {
-        string postAsJson = File.ReadAllTextAsync(filePath).Result;
-        List<Post> posts = JsonSerializer.Deserialize<List<Post>>(postAsJson) !;
-        return posts.AsQueryable();
+        return LoadPostsAsync().Result.AsQueryable();
     }
 }

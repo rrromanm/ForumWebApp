@@ -5,31 +5,27 @@ namespace CLI.UI.ManageComments;
 
 public class ListCommentsView
 {
-    private readonly ICommentRepository _commentRepository;
+    private readonly ICommentRepository commentRepository;
 
     public ListCommentsView(ICommentRepository commentRepository)
     {
-        _commentRepository = commentRepository;
-    }
-    
-    public async Task DisplayCommentsByIdAsync(int postID)
-    {
-        var comments = await _commentRepository.GetCommentsByPostIdAsync(postID);
-    
-        Console.WriteLine($"Listing Comments for post {postID}:");
-        
-        foreach (Comment comment in comments)
-        {
-            Console.WriteLine($"- {comment.Id}: {comment.Body}");
-        }
+        this.commentRepository = commentRepository;
     }
 
-    public async Task DisplayCommentsAsync()
+    public async Task ShowAsync()
     {
-        Console.WriteLine("Listing all comments:");
-        foreach (Comment comment in _commentRepository.GetMany())
+        var comments = await Task.Run(() => commentRepository.GetManyAsync().ToList());
+        if (comments.Any())
         {
-            Console.WriteLine($"- {comment.Id}: {comment.Body}");
+            Console.WriteLine("\nComments: ");
+            foreach (var comment in comments)
+            {
+                Console.WriteLine($"ID: {comment.Id}, Body: {comment.Body}, PostID: {comment.PostId}, UserID: {comment.UserId}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("\nNo comments found.");
         }
     }
 }

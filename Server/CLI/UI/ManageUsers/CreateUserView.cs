@@ -12,10 +12,15 @@ public class CreateUserView
         this.userRepository = userRepository;
     }
 
-    public async Task addUserAsync(string username, string password)
+    public async Task addUserAsync()
     {
+        Console.Clear();
+        Console.WriteLine("Enter username: ");
+        var username = Console.ReadLine();
+        Console.WriteLine("Enter password: ");
+        var password = Console.ReadLine();
         User user = new User(username, password);
-        await userRepository.AddAsync(user);
         Console.WriteLine($"User '{username}' has been created successfully.");
+        await userRepository.AddAsync(user);
     }
 }

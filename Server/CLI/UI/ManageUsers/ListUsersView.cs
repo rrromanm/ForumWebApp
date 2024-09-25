@@ -13,8 +13,9 @@ public class ListUsersView
         this.userRepository = userRepository;
     }
 
-    public async Task DisplayUsers()
+    public async Task ListUsersAsync()
     {
+        Console.Clear();
         Console.WriteLine("Listing all users");
         foreach (User user in userRepository.GetMany())
         {

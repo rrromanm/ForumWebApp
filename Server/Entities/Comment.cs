@@ -17,12 +17,4 @@ public class Comment
         PostId = postID;
         UserId = userID;
     }
-    
-    public Comment(string body, int postID, int userID, int id)
-    {
-        Id = id;
-        Body = body;
-        PostId = postID;
-        UserId = userID;
-    }
 }

@@ -7,22 +7,95 @@ public class ManageUsersView
 {
     
     private readonly IUserRepository userRepository;
+    private readonly IPostRepository postRepository;
+    private readonly ICommentRepository commentRepository;
 
-    public ManageUsersView(IUserRepository userRepository)
+    public ManageUsersView(IUserRepository userRepository, IPostRepository postRepository, ICommentRepository commentRepository)
     {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+        
     }
 
-    public async Task UpdateUserAsync(string username, string password, int userId)
+    public async Task displayMenu()
     {
-        User user = new User(username, password, userId);
-        await userRepository.UpdateAsync(user);
-        Console.WriteLine($"User with ID {userId} updated successfully.");
+        while (true)
+        {
+            Console.WriteLine("Manage users: ");
+            Console.WriteLine("1. Create an user");
+            Console.WriteLine("2. Update an user");
+            Console.WriteLine("3. Delete an user");
+            Console.WriteLine("4. View all users");
+            Console.WriteLine("5. View single user");
+            Console.WriteLine("0. Back");
+            Console.Write("Select an option: ");
+
+            var input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    await CreateUserAsync();
+                    break;
+
+                case "2":
+                    await UpdateUserAsync();
+                    break;
+
+                case "3":
+                    await DeleteUserAsync();
+                    break;
+
+                case "4":
+                    await ListUsersAsync();
+                    break;
+
+                case "5":
+                    await SingleUserAsync();
+                    break;
+                case "0":
+                    await MainMenuAsync();
+                    break;
+                default:
+                    Console.WriteLine("Incorrect input"); break;
+            }
+        }
+        
+    }
+    private async Task CreateUserAsync()
+    {
+        var createUserView = new CreateUserView(userRepository);
+        await createUserView.addUserAsync();
     }
 
-    public async Task DeleteUserAsync(int userId)
+    private async Task UpdateUserAsync()
     {
-        await userRepository.DeleteAsync(userId);
-        Console.WriteLine($"User with ID {userId} deleted successfully.");
+        var updateUserView = new UpdateUserView(userRepository);
+        await updateUserView.UpdateUserAsync();
+    }
+
+    private async Task DeleteUserAsync()
+    {
+        var deleteUserView = new DeleteUserView(userRepository);
+        await deleteUserView.DeleteUserAsync();
+    }
+
+    private async Task ListUsersAsync()
+    {
+        var listUsersView = new ListUsersView(userRepository);
+        await listUsersView.ListUsersAsync();
+    }
+
+    private async Task SingleUserAsync()
+    {
+        var singleUserView = new SingleUserView(userRepository);
+        await singleUserView.SingleUserAsync();
+    }
+    
+    private async Task MainMenuAsync()
+    {
+        var mainMenu = new CliApp(userRepository, postRepository, commentRepository);
+        await mainMenu.StartAsync();
     }
 }
