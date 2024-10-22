@@ -6,7 +6,7 @@ namespace FileRepositories;
 
 public class UserFileRepository : IUserRepository
 {
-    private readonly string FilePath = "users.json";
+    private readonly string FilePath = "WebAPI/users.json";
 
     public UserFileRepository()
     {

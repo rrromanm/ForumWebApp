@@ -123,4 +123,11 @@ public class CommentFileRepository : ICommentRepository
         }
         
     }
+    
+    public async Task<List<Comment>> GetCommentsByPostIdAsync(int postId)
+    {
+        List<Comment> comments = await LoadCommentsAsync();
+        var filteredComments = comments.Where(c => c.PostId == postId).ToList();
+        return filteredComments;
+    }
 }
