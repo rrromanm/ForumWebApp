@@ -7,7 +7,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CommentsController
+public class CommentsController : ControllerBase
 {
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
@@ -16,6 +16,7 @@ public class CommentsController
     public CommentsController(ICommentRepository commentRepository,
         IUserRepository userRepository, IPostRepository postRepository)
     {
+        Console.WriteLine("working");
         _commentRepository = commentRepository;
         _userRepository = userRepository;
         _postRepository = postRepository;
@@ -53,6 +54,7 @@ public class CommentsController
     }
 
     // PUT localhost:7078/comments/{id}
+    [HttpPut]
     public async Task<IResult> UpdateComment([FromRoute] int id,
         [FromBody] ReplaceCommentDTO request)
     {
@@ -69,7 +71,7 @@ public class CommentsController
     }
 
     // GET localhost:7078/comments/{id}
-    [HttpGet]
+    [HttpGet("{id:int}")]
     public async Task<IResult> GetSingleComment([FromRoute] int id)
     {
         try

@@ -7,7 +7,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController
+public class UsersController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
     
@@ -31,6 +31,7 @@ public class UsersController
     } 
 
     // PUT localhost:7078/users/{id}
+    [HttpPut("{id:int}")]
     public async Task<IResult> UpdateUser([FromRoute] int id, [FromBody] ReplaceUserDTO request)
     {
         User user = new User()

@@ -7,7 +7,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class PostsController
+public class PostsController : ControllerBase
 {
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
@@ -46,6 +46,7 @@ public class PostsController
     }
 
     // PUT localhost:7078/posts/{id}
+    [HttpPut]
     public async Task<IResult> UpdatePost([FromRoute] int id,
         [FromBody] ReplacePostDTO request)
     {
