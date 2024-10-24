@@ -86,6 +86,15 @@ public class UserFileRepository : IUserRepository
 
     public IQueryable<User> GetMany()
         => ReadData().Result.AsQueryable();
-    
-    
+
+        public async Task<User> GetByUsernameAsync(string username)
+        {
+            List<User> users = await ReadData();
+            User? user = users.SingleOrDefault(u => u.Username == username);
+            if (user is null)
+            {
+                throw new InvalidOperationException($"User with ID '{username}' not found");
+            }
+            return user;
+        }
 }

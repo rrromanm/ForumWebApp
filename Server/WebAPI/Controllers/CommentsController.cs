@@ -3,116 +3,112 @@ using Entities;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
-namespace WebAPI.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class CommentsController : ControllerBase
+namespace WebAPI.Controllers
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IPostRepository _postRepository;
-    private readonly IUserRepository _userRepository;
-
-    public CommentsController(ICommentRepository commentRepository,
-        IUserRepository userRepository, IPostRepository postRepository)
+    [ApiController]
+    [Route("[controller]")]
+    public class CommentsController : ControllerBase
     {
-        Console.WriteLine("working");
-        _commentRepository = commentRepository;
-        _userRepository = userRepository;
-        _postRepository = postRepository;
-    }
+        private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _userRepository;
 
-    //POST localhost:7078/comments
-    [HttpPost]
-    public async Task<IResult> CreateComment([FromBody] AddComentDTO request)
-    {
-        Post? existingPost =
-            await _postRepository.GetSingleAsync(request.PostId);
-        User? existingUser =
-            await _userRepository.GetSingleAsync(request.UserId);
-
-        if (existingPost == null)
+        public CommentsController(ICommentRepository commentRepository,
+            IUserRepository userRepository, IPostRepository postRepository)
         {
-            return Results.NotFound(
-                $"Post with ID '{request.PostId}' not found.");
+            _commentRepository = commentRepository;
+            _userRepository = userRepository;
+            _postRepository = postRepository;
         }
 
-        if (existingUser == null)
+        // POST localhost:7078/comments
+        [HttpPost]
+        public async Task<IResult> CreateCommentAsync([FromBody] AddComentDTO request)
         {
-            return Results.NotFound(
-                $"User with ID '{request.UserId}' not found.");
+            var existingPost = await _postRepository.GetSingleAsync(request.PostId);
+            var existingUser = await _userRepository.GetSingleAsync(request.UserId);
+
+            if (existingPost == null)
+            {
+                return Results.NotFound($"Post with ID '{request.PostId}' not found.");
+            }
+
+            if (existingUser == null)
+            {
+                return Results.NotFound($"User with ID '{request.UserId}' not found.");
+            }
+
+            var comment = new Comment
+            {
+                Body = request.Body,
+                UserId = request.UserId,
+                PostId = request.PostId
+            };
+            await _commentRepository.AddAsync(comment);
+            return Results.Created($"comments/{comment.Id}", comment);
         }
 
-        Comment comment = new Comment()
+        // PUT localhost:7078/comments/{id}
+        [HttpPut("{id:int}")]
+        public async Task<IResult> UpdateCommentAsync([FromRoute] int id, [FromBody] ReplaceCommentDTO request)
         {
-            Body = request.Body,
-            UserId = request.UserId,
-            PostId = request.PostId
-        };
-        await _commentRepository.AddAsync(comment);
-        return Results.Created($"comments/{comment.Id}", comment);
-    }
+            var existingComment = await _commentRepository.GetSingleAsync(id);
+            if (existingComment == null)
+            {
+                return Results.NotFound($"Comment with ID {id} not found.");
+            }
 
-    // PUT localhost:7078/comments/{id}
-    [HttpPut]
-    public async Task<IResult> UpdateComment([FromRoute] int id,
-        [FromBody] ReplaceCommentDTO request)
-    {
-        Comment? existingComment = await _commentRepository.GetSingleAsync(id);
-        Comment comment = new Comment()
-        {
-            Id = id,
-            Body = request.Body,
-            UserId = existingComment.UserId,
-            PostId = existingComment.PostId
-        };
-        await _commentRepository.UpdateAsync(comment);
-        return Results.Ok(comment);
-    }
+            var comment = new Comment
+            {
+                Id = id,
+                Body = request.Body,
+                UserId = existingComment.UserId,
+                PostId = existingComment.PostId
+            };
+            await _commentRepository.UpdateAsync(comment);
+            return Results.Ok(comment);
+        }
 
-    // GET localhost:7078/comments/{id}
-    [HttpGet("{id:int}")]
-    public async Task<IResult> GetSingleComment([FromRoute] int id)
-    {
-        try
+        // GET localhost:7078/comments/{id}
+        [HttpGet("{id:int}")]
+        public async Task<IResult> GetSingleCommentAsync([FromRoute] int id)
         {
-            Comment result = await _commentRepository.GetSingleAsync(id);
+            var result = await _commentRepository.GetSingleAsync(id);
+            if (result == null)
+            {
+                return Results.NotFound($"Comment with ID {id} not found.");
+            }
             return Results.Ok(result);
         }
-        catch (Exception e)
+
+        // GET localhost:7078/comments
+        [HttpGet]
+        public async Task<IResult> GetCommentsAsync([FromQuery] string? title, [FromQuery] int? commentId)
         {
-            Console.WriteLine(e);
-            return Results.NotFound(e.Message);
+            List<Comment> comments = _commentRepository.GetManyAsync().ToList();
+            if(!string.IsNullOrWhiteSpace(title))
+            {
+                comments = comments.Where(c => c.Body.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if(commentId.HasValue)
+            {
+                comments = comments.Where(c => c.Id == commentId).ToList();
+            }
+            return Results.Ok(comments);
         }
 
-    }
-
-    // GET localhost:7078/comments/post/
-    [HttpGet]
-    public async Task<IResult> GetComments([FromQuery] string? title,
-        [FromQuery] int? commentId)
-    {
-        List<Comment> comments = new List<Comment>();
-        if (string.IsNullOrEmpty(title))
+        // DELETE localhost:7078/comments/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IResult> DeleteCommentAsync([FromRoute] int id)
         {
-            comments = comments.Where(c =>
-                    c.Body.Contains(title, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            var existingComment = await _commentRepository.GetSingleAsync(id);
+            if (existingComment == null)
+            {
+                return Results.NotFound($"Comment with ID {id} not found.");
+            }
+
+            await _commentRepository.DeleteAsync(id);
+            return Results.NoContent();
         }
-
-        if (commentId.HasValue)
-        {
-            comments = comments.Where(c => c.Id == commentId).ToList();
-        }
-
-        return Results.Ok(comments);
-    }
-
-    // DELETE localhost:7078/comments/{id}
-    [HttpDelete("{id:int}")]
-    public async Task<IResult> DeleteComment([FromRoute] int id)
-    {
-        await _commentRepository.DeleteAsync(id);
-        return Results.NoContent();
     }
 }

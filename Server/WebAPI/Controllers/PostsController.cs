@@ -3,126 +3,120 @@ using Entities;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
-namespace WebAPI.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class PostsController : ControllerBase
+namespace WebAPI.Controllers
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IPostRepository _postRepository;
-    private readonly IUserRepository _userRepository;
-
-    public PostsController(ICommentRepository commentRepository,
-        IUserRepository userRepository, IPostRepository postRepository)
+    [ApiController]
+    [Route("[controller]")]
+    public class PostsController : ControllerBase
     {
-        _commentRepository = commentRepository;
-        _userRepository = userRepository;
-        _postRepository = postRepository;
-    }
+        private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _userRepository;
 
-    //POST localhost:7078/posts
-    [HttpPost]
-    public async Task<IResult> CreatePost([FromBody] AddPostDTO request)
-    {
-        User? existingUser =
-            await _userRepository.GetSingleAsync(request.UserId);
-
-        if (existingUser == null)
+        public PostsController(ICommentRepository commentRepository,
+            IUserRepository userRepository, IPostRepository postRepository)
         {
-            return Results.NotFound(
-                $"User with ID '{request.UserId}' not found.");
+            _commentRepository = commentRepository;
+            _userRepository = userRepository;
+            _postRepository = postRepository;
         }
 
-        Post post = new Post()
+        // POST localhost:7078/posts
+        [HttpPost]
+        public async Task<IResult> CreatePostAsync([FromBody] AddPostDTO request)
         {
-            Title = request.Title,
-            Body = request.Body,
-            UserId = request.UserId
-        };
-        
-        await _postRepository.AddAsync(post);
-        return Results.Created($"posts/{post.Id}", post);
-    }
+            var existingUser = await _userRepository.GetSingleAsync(request.UserId);
+            if (existingUser == null)
+            {
+                return Results.NotFound($"User with ID '{request.UserId}' not found.");
+            }
 
-    // PUT localhost:7078/posts/{id}
-    [HttpPut]
-    public async Task<IResult> UpdatePost([FromRoute] int id,
-        [FromBody] ReplacePostDTO request)
-    {
-        Post? existingPost = await _postRepository.GetSingleAsync(id);
-        Post post = new Post()
-        {
-            Id = id,
-            Title = request.Title,
-            Body = request.Body,
-            UserId = existingPost.UserId
-        };
-        await _postRepository.UpdateAsync(post);
-        return Results.Ok(post);
-    }
+            var post = new Post
+            {
+                Title = request.Title,
+                Body = request.Body,
+                UserId = request.UserId
+            };
 
-    // GET localhost:7078/posts/{id}
-    [HttpGet("{id:int}")]
-    public async Task<IResult> GetSinglePost([FromRoute] int id)
-    {
-        try
+            await _postRepository.AddAsync(post);
+            return Results.Created($"posts/{post.Id}", post);
+        }
+
+        // PUT localhost:7078/posts/{id}
+        [HttpPut("{id:int}")]
+        public async Task<IResult> UpdatePostAsync([FromRoute] int id, [FromBody] ReplacePostDTO request)
         {
-            Post? result = await _postRepository.GetSingleAsync(id);
-            if (result == null)
+            var existingPost = await _postRepository.GetSingleAsync(id);
+            if (existingPost == null)
             {
                 return Results.NotFound($"Post with ID {id} not found.");
             }
 
-            List<Comment> comments = await _commentRepository.GetCommentsByPostIdAsync(id);
-            var postWithComments = new
+            existingPost.Title = request.Title;
+            existingPost.Body = request.Body;
+
+            await _postRepository.UpdateAsync(existingPost);
+            return Results.Ok(existingPost);
+        }
+
+        // GET localhost:7078/posts/{id}
+        [HttpGet("{id:int}")]
+        public async Task<IResult> GetSinglePostAsync([FromRoute] int id)
+        {
+            try
             {
-                Post = result,
-                Comments = comments
-            };
-            return Results.Ok(postWithComments);
+                var result = await _postRepository.GetSingleAsync(id);
+                if (result == null)
+                {
+                    return Results.NotFound($"Post with ID {id} not found.");
+                }
+
+                var comments = await _commentRepository.GetCommentsByPostIdAsync(id);
+                var postWithComments = new
+                {
+                    Post = result,
+                    Comments = comments
+                };
+                return Results.Ok(postWithComments);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (use a logging framework)
+                return Results.StatusCode(500);
+            }
         }
-        
-        catch (Exception e)
+
+        // GET localhost:7078/posts
+        [HttpGet]
+        public async Task<IResult> GetPostsAsync([FromQuery] string? titleContains, [FromQuery] int? userId)
         {
-            Console.WriteLine(e);
-            return Results.NotFound(e.Message);
+            List<Post> posts =  _postRepository.GetMany().ToList();
+
+            if (!string.IsNullOrWhiteSpace(titleContains))
+            {
+                posts = posts.Where(p => p.Title.Contains(titleContains, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (userId.HasValue)
+            {
+                posts = posts.Where(p => p.UserId == userId).ToList();
+            }
+
+            return Results.Ok(posts);
         }
 
-    }
-
-    // GET localhost:7078/posts
-    [HttpGet]
-    public async Task<IResult> GetPosts([FromQuery] string? titleContains,
-        [FromQuery] int? userId)
-    {
-        List<Post> posts = _postRepository.GetMany().ToList();
-        
-        if (string.IsNullOrEmpty(titleContains))
+        // DELETE localhost:7078/posts/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IResult> DeletePostAsync(int id)
         {
-            posts = posts.Where(c =>
-                    c.Body.Contains(titleContains, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            var existingPost = await _postRepository.GetSingleAsync(id);
+            if (existingPost == null)
+            {
+                return Results.NotFound($"Post with ID {id} not found.");
+            }
+
+            await _postRepository.DeleteAsync(id);
+            return Results.NoContent();
         }
-
-        if (userId.HasValue)
-        {
-            posts = posts.Where(p => p.Title.Contains(titleContains, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-        if (userId.HasValue)
-        {
-            posts = posts.Where(p => p.UserId == userId).ToList();
-        }
-
-        return Results.Ok(posts);
-    }
-
-    // DELETE localhost:7078/posts/{id}
-    [HttpDelete("{id:int}")]
-    public async Task<IResult> DeletePostAsync(int id)
-    {
-        await _postRepository.DeleteAsync(id);
-        return Results.NoContent();
     }
 }
