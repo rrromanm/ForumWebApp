@@ -4,5 +4,11 @@
     "Title": "PRO lesson",
     "Body": "boring",
     "UserId": 1
+  },
+  {
+    "Id": 2,
+    "Title": "womp",
+    "Body": "works?",
+    "UserId": 1
   }
 ]

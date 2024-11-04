@@ -1,23 +1,25 @@
-﻿@page "/login"
+﻿@page "/register"
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager navMgr
 <link rel="stylesheet" href="css/auth.css" />
 
 <div class="login-container">
     <div class="login-box">
-        <h3>Please login</h3>
+        <h3>Register</h3>
         <label>Username:</label>
         <input type="text" @bind="username" />
         <label>Password:</label>
         <input type="password" @bind="password" />
+        <label>Confirm Password:</label>
+        <input type="password" @bind="confirmPassword" />
         @if (!string.IsNullOrEmpty(errorLabel)) {
             <label class="error-label">
                 @errorLabel
             </label>
         }
         <div class="button-container">
-            <button @onclick="Register">Register</button>
-            <button @onclick="LoginAsync">Log in</button>
+            <button @onclick="RegisterAsync">Register</button>
+            <button @onclick="Cancel">Cancel</button>
         </div>
     </div>
 </div>
@@ -25,15 +27,23 @@
 @code {
     private string username;
     private string password;
+    private string confirmPassword;
     private string errorLabel;
 
-    private async Task LoginAsync()
+    private async Task RegisterAsync()
     {
         errorLabel = "";
+        if (password != confirmPassword)
+        {
+            errorLabel = "Passwords do not match.";
+            return;
+        }
+
         try
         {
-            await ((SimpleAuthProvider)AuthProvider).Login(username, password);
+            await ((SimpleAuthProvider)AuthProvider).Register(username, password);
             navMgr.NavigateTo("/");
+            navMgr.NavigateTo("/login");
         }
         catch (Exception ex)
         {
@@ -42,8 +52,8 @@
         }
     }
 
-    private void Register()
+    private void Cancel()
     {
-        navMgr.NavigateTo("/register");
+        navMgr.NavigateTo("/login");
     }
 }

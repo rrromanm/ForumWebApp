@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
     }
 
     // POST localhost:7078/login
-    [HttpPost]
+    [HttpPost("/login")]
     public async Task<IResult> LoginAsync([FromBody] LoginRequestDTO requestDto)
     {
         var user = await _userRepository.GetByUsernameAsync(requestDto.Username);

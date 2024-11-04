@@ -19,12 +19,13 @@ public class SimpleAuthProvider : AuthenticationStateProvider
     public async Task Login(string username, string password)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync(
-            "https:localhost:7078/Auth",
+            $"https://localhost:7078/login",
             new LoginRequestDTO(username, password));
-            
+        
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
+            Console.WriteLine(content);
             throw new Exception(content);
         }
         UserDTO userDto = JsonSerializer.Deserialize<UserDTO>(content, new JsonSerializerOptions
@@ -45,6 +46,13 @@ public class SimpleAuthProvider : AuthenticationStateProvider
             Task.FromResult(new AuthenticationState(currentClaimsPrincipal))
             );
     }
+
+    // public async Task Register(string username, string password)
+    // {
+    //     HttpResponseMessage response = await client.PostAsJsonAsync(
+    //         $"https://localhost:7078/register",
+    //         new AddUserDTO(username, password));
+    // }
     
     public void Logout()
     {
