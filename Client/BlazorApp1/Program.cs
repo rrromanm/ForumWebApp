@@ -1,10 +1,20 @@
-using BlazorApp.Components;
+using BlazorApp1.Components;
+using BlazorApp1.Components.Auth;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped(sp => new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:7279")
+    }
+);
+
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
 var app = builder.Build();
 

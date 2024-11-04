@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
         // POST localhost:7078/comments
         [HttpPost]
-        public async Task<IResult> CreateCommentAsync([FromBody] AddComentDTO request)
+        public async Task<IResult> CreateCommentAsync([FromBody] AddComentDTO    request)
         {
             var existingPost = await _postRepository.GetSingleAsync(request.PostId);
             var existingUser = await _userRepository.GetSingleAsync(request.UserId);

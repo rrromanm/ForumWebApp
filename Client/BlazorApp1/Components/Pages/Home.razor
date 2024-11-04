@@ -1,0 +1,17 @@
+﻿@page "/"
+@inject NavigationManager navMgr
+
+<PageTitle>Home</PageTitle>
+
+<h1>Forum App</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Hello, @context.User.Identity.Name</h3>
+    </Authorized>
+    <NotAuthorized>
+        lol you're not logged in
+    </NotAuthorized>
+</AuthorizeView>
+Here you can browse interesting posts.
+<button onclick=' () => navMgr.NavigateTo("/login")'>go to login</button>
