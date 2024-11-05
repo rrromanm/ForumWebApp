@@ -25,9 +25,31 @@ public class UserFileRepository : IUserRepository
     
     private async Task<List<User>> ReadData()
     {
+        try
+        {
             string usersAsJson = await File.ReadAllTextAsync(FilePath);
+        
+            if (string.IsNullOrWhiteSpace(usersAsJson))
+            {
+                // Log or handle the case where the JSON content is empty
+                return new List<User>();
+            }
+
+            // Try deserializing JSON content
             return JsonSerializer.Deserialize<List<User>>(usersAsJson) ?? new List<User>();
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+            return new List<User>(); // Return an empty list if deserialization fails
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            return new List<User>(); // Handle unexpected errors
+        }
     }
+
 
 
     private async Task WriteData(List<User> users)
@@ -91,10 +113,6 @@ public class UserFileRepository : IUserRepository
         {
             List<User> users = await ReadData();
             User? user = users.SingleOrDefault(u => u.Username == username);
-            if (user is null)
-            {
-                throw new InvalidOperationException($"User with ID '{username}' not found");
-            }
             return user;
         }
 }
