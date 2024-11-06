@@ -1,7 +1,6 @@
 ﻿@page "/login"
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager navMgr
-<link rel="stylesheet" href="css/auth.css" />
 
 <div class="login-container">
     <div class="login-box">
@@ -33,7 +32,7 @@
         try
         {
             await ((SimpleAuthProvider)AuthProvider).Login(username, password);
-            navMgr.NavigateTo("/home");
+            navMgr.NavigateTo("/ViewPosts");
         }
         catch (Exception ex)
         {

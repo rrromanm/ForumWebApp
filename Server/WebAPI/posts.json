@@ -10,5 +10,53 @@
     "Title": "womp",
     "Body": "works?",
     "UserId": 1
+  },
+  {
+    "Id": 3,
+    "Title": "string",
+    "Body": "string",
+    "UserId": 1
+  },
+  {
+    "Id": 4,
+    "Title": "hellooo",
+    "Body": "strfjadsfhdasjklfdaing",
+    "UserId": 1
+  },
+  {
+    "Id": 5,
+    "Title": "asdffdas",
+    "Body": "adfsadfs",
+    "UserId": 1
+  },
+  {
+    "Id": 6,
+    "Title": "hreigl",
+    "Body": "asdfafsd",
+    "UserId": 1
+  },
+  {
+    "Id": 7,
+    "Title": "Hello Its my first Post",
+    "Body": "My name is Roman how is your day",
+    "UserId": 2
+  },
+  {
+    "Id": 8,
+    "Title": "???",
+    "Body": "asdf",
+    "UserId": 1
+  },
+  {
+    "Id": 9,
+    "Title": "user",
+    "Body": "user",
+    "UserId": 1
+  },
+  {
+    "Id": 10,
+    "Title": "hello",
+    "Body": "fgsd",
+    "UserId": 2
   }
 ]

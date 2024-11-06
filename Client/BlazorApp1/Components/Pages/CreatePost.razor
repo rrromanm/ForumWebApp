@@ -1,0 +1,54 @@
+﻿@page "/CreatePost"
+@using BlazorApp1.Components.Services.ClientInterfaces
+@using DTOs.Post
+@inject IPostService postService
+@inject NavigationManager navMgr
+@inject AuthenticationStateProvider AuthProvider
+
+<h3>Create Post</h3>
+
+<EditForm Model="newPost" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="newPost.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label for="body" class="form-label">Body</label>
+        <InputTextArea id="body" class="form-control" @bind-Value="newPost.Body" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    private AddPostDTO newPost = new AddPostDTO();
+
+    private async Task HandleValidSubmit()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst("Id");
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+            {
+                newPost.UserId = userId;
+                await postService.CreateAsync(newPost);
+                navMgr.NavigateTo("/ViewPosts");
+            }
+            else
+            {
+                // Handle the case where the user ID claim is not found or invalid
+            }
+        }
+        else
+        {
+            // Handle the case where the user is not authenticated
+        }
+    }
+}

@@ -1,9 +1,9 @@
-﻿namespace DTOs.Post;
-
-public class AddPostDTO
+﻿namespace DTOs.Post
 {
-    
-    public int UserId { get; set; }
-    public string Title { get; set; }
-    public string Body { get; set; }
+    public class AddPostDTO
+    {
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public int UserId { get; set; }
+    }
 }

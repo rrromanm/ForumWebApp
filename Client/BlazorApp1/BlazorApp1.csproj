@@ -7,7 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Server\Entities\Entities.csproj" />
       <ProjectReference Include="..\..\Shared\ApiContracts\ApiContracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\css\auth.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\home.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\welcome.css" />
     </ItemGroup>
 
 </Project>

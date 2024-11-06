@@ -1,0 +1,39 @@
+﻿@page "/ViewPosts"
+@using BlazorApp1.Components.Services.ClientInterfaces
+@using Entities
+@inject IPostService postService
+
+<link rel="stylesheet" href="css/viewPosts.css" />
+
+<h3>View Posts</h3>
+
+@if (posts == null)
+{
+<p>Loading...</p>
+}
+else if (!posts.Any())
+{
+<p>No posts available.</p>
+}
+else
+{
+<ul class="post-list">
+    @foreach (var post in posts)
+    {
+    <li class="post-item">
+        <h4>@post.Title</h4>
+        <p>@post.Body</p>
+        <p><em>By @post.UserId</em></p> <!-- Display the UserName -->
+    </li>
+    }
+</ul>
+}
+
+@code {
+private ICollection<Post> posts;
+
+protected override async Task OnInitializedAsync()
+{
+posts = await postService.GetPostsAsync(null, null, null);
+}
+}
