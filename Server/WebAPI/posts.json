@@ -58,5 +58,17 @@
     "Title": "hello",
     "Body": "fgsd",
     "UserId": 2
+  },
+  {
+    "Id": 11,
+    "Title": "hello im user",
+    "Body": "hi",
+    "UserId": 1
+  },
+  {
+    "Id": 12,
+    "Title": "fdsaf",
+    "Body": "fsda",
+    "UserId": 1
   }
 ]

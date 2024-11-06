@@ -2,6 +2,7 @@
 @using BlazorApp1.Components.Services.ClientInterfaces
 @using Entities
 @inject IPostService postService
+@inject IUserService userService
 
 <link rel="stylesheet" href="css/viewPosts.css" />
 
@@ -23,7 +24,7 @@ else
     <li class="post-item">
         <h4>@post.Title</h4>
         <p>@post.Body</p>
-        <p><em>By @post.UserId</em></p> <!-- Display the UserName -->
+        <p><em>By @($"@{usernames[post.UserId]}")</em></p>
     </li>
     }
 </ul>
@@ -31,9 +32,17 @@ else
 
 @code {
 private ICollection<Post> posts;
+private Dictionary<int, string> usernames = new Dictionary<int, string>();
 
 protected override async Task OnInitializedAsync()
 {
 posts = await postService.GetPostsAsync(null, null, null);
+foreach (var post in posts)
+{
+if (!usernames.ContainsKey(post.UserId))
+{
+usernames[post.UserId] = await userService.GetUserNameAsync(post.UserId);
+}
+}
 }
 }

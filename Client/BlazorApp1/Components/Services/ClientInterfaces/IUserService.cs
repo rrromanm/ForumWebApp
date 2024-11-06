@@ -6,5 +6,5 @@ public interface IUserService
 {
     public Task<UserDTO> AddUserAsync(AddUserDTO addUserDto);
     public Task UpdateUserAsync(int id, ReplaceUserDTO replaceUserDto);
-    Task<string> GetUserNameByIdAsync(int userId);
+    Task<string> GetUserNameAsync(int userId);
 }
