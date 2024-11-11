@@ -1,0 +1,60 @@
+﻿@page "/posts/{postId:int}"
+@using BlazorApp1.Components.Services.ClientInterfaces
+@using DTOs.Comment
+@inject IPostService PostService
+@inject IUserService UserService
+
+@attribute [Authorize]
+
+@if (postWithComments == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>Title: @postWithComments.Post.Title</h3>
+    <p>Content: @postWithComments.Post.Body</p>
+    <p><strong>Author:</strong> @username</p>
+
+    <h4>Add a Comment</h4>
+    <input type="text" @bind="newCommentBody" placeholder="Write a comment..." />
+    <button @onclick="AddComment">Submit</button>
+
+    <h4>Comments</h4>
+    <ul>
+        @foreach (var comment in postWithComments.Comments)
+        {
+            <li>@comment.Body</li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter]
+    public int postId { get; set; }
+
+    private PostWithCommentsDTO postWithComments;
+    private string newCommentBody;
+    private string username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        postWithComments = await PostService.GetPostByIdAsync(postId);
+        username = await UserService.GetUserNameAsync(postWithComments.Post.UserId);
+        StateHasChanged(); // Ensure the component re-renders
+    }
+
+    private async Task AddComment()
+    {
+        var newComment = new AddComentDTO()
+        {
+            PostId = postId,
+            Body = newCommentBody
+        };
+
+        await PostService.AddCommentAsync(newComment);
+        postWithComments.Comments = await PostService.GetCommentsAsync(postId);
+        newCommentBody = string.Empty;
+        StateHasChanged(); // Ensure the component re-renders
+    }
+}

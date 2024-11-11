@@ -118,5 +118,21 @@ namespace WebAPI.Controllers
             await _postRepository.DeleteAsync(id);
             return Results.NoContent();
         }
+        
+        // GET https://localhost:7078/posts/{postId}/comments
+        [HttpGet("{postId:int}/comments")]
+        public async Task<IResult> GetCommentsByPostIdAsync([FromRoute] int postId)
+        {
+            try
+            {
+                List<Comment> comments = await _commentRepository.GetCommentsByPostIdAsync(postId);
+                return Results.Ok(comments);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return Results.NotFound(e.Message);
+            }
+        }
     }
 }

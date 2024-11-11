@@ -6,15 +6,21 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddAuthentication()
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        // other cookie settings
+    });
+
+// Add other services to the container
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped(sp => new HttpClient
-    {
-        BaseAddress = new Uri("https://localhost:7279")
-    }
-);
+{
+    BaseAddress = new Uri("https://localhost:7279")
+});
 
 builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
@@ -26,11 +32,13 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+// Enable authentication middleware
+app.UseAuthentication();  // This line is necessary to apply authentication globally
 
 app.UseStaticFiles();
 app.UseAntiforgery();
