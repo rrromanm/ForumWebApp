@@ -25,27 +25,27 @@ public class HttpPostService : IPostService
         }
     }
 
-    public async Task<ICollection<PostDTO>> GetPostsAsync()
+    public async Task<ICollection<Post>> GetPostsAsync(string? titleContains, string? contentContains, string? username)
     {
-        HttpResponseMessage response = await client.GetAsync("https://localhost:7078/Posts");
+        string query = ConstructQuery(titleContains, contentContains, username);
+        HttpResponseMessage response = await client.GetAsync("https://localhost:7078/Posts" + query);
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(content);
         }
-        
-        return JsonSerializer.Deserialize<ICollection<PostDTO>>(content, new JsonSerializerOptions
+
+        ICollection<Post> posts = JsonSerializer.Deserialize<ICollection<Post>>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
+        return posts;
     }
 
-<<<<<<< Updated upstream
     public async Task<PostWithCommentsDTO> GetPostByIdAsync(int id)
     {
         HttpResponseMessage response = await client.GetAsync($"https://localhost:7078/Posts/{id}");
         string content = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"API Response: {content}");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(content);
@@ -88,22 +88,23 @@ public class HttpPostService : IPostService
             throw new Exception("Error adding comment: " + ex.Message, ex);
         }
     }
-
     private string ConstructQuery(string? titleContains, string? contentContains, string? username)
-=======
-    public async Task<PostDTO> GetPostByIdAsync(int postId)
->>>>>>> Stashed changes
     {
-        HttpResponseMessage response = await client.GetAsync($"https://localhost:7078/Posts/{postId}");
-        string content = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
+        string query = "";
+        if (titleContains != null)
         {
-            throw new Exception(content);
+            query += $"titleContains={titleContains}&";
         }
 
-        return JsonSerializer.Deserialize<PostDTO>(content, new JsonSerializerOptions
+        if (contentContains != null)
         {
-            PropertyNameCaseInsensitive = true
-        })!;
+            query += $"contentContains={contentContains}&";
+        }
+        if (username != null)
+        {
+            query += $"username={username}&";
+        }
+
+        return query;
     }
 }

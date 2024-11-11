@@ -1,10 +1,9 @@
 ﻿@page "/ViewPosts"
 @using BlazorApp1.Components.Services.ClientInterfaces
-@using DTOs.Post
+@using Entities
 @inject IPostService postService
 @inject IUserService userService
-
-@attribute [Authorize]
+@inject NavigationManager navMgr
 
 <link rel="stylesheet" href="css/viewPosts.css" />
 
@@ -12,40 +11,46 @@
 
 @if (posts == null)
 {
-<p>Loading...</p>
+    <p>Loading...</p>
 }
 else if (!posts.Any())
 {
-<p>No posts available.</p>
+    <p>No posts available.</p>
 }
 else
 {
-<ul class="post-list">
-    @foreach (var post in posts)
-    {
-    <li class="post-item">
-        <h4>@post.Title</h4>
-        <p>@post.Body</p>
-        <p><em>By @($"@{usernames[post.UserId]}")</em></p>
-    </li>
-    }
-</ul>
+    <ul class="post-list">
+        @foreach (var post in posts)
+        {
+            <li class="post-item">
+                <h4>@post.Title</h4>
+                <p>@post.Body</p>
+                <p><em>By @($"@{usernames[post.UserId]}")</em></p>
+                <button class="btn btn-primary" @onclick="() => ViewComments(post.Id)">View Comments</button>
+            </li>
+        }
+    </ul>
 }
 
 @code {
-private ICollection<PostDTO> posts;
-private Dictionary<int, string> usernames = new Dictionary<int, string>();
+    private ICollection<Post> posts;
+    private Dictionary<int, string> usernames = new Dictionary<int, string>();
 
     protected override async Task OnInitializedAsync()
     {
-    posts = await postService.GetPostsAsync();
-    foreach (var post in posts)
-    {
-        if (!usernames.ContainsKey(post.UserId))
+        posts = await postService.GetPostsAsync(null, null, null);
+        foreach (var post in posts)
         {
-            var user = await userService.GetUserNameAsync(post.UserId);
-            usernames[post.UserId] = user.Username;
+            if (!usernames.ContainsKey(post.UserId))
+            {
+                var user = await userService.GetUserNameAsync(post.UserId);
+                usernames[post.UserId] = user.Username;
+            }
         }
     }
+
+    private void ViewComments(int postId)
+    {
+        navMgr.NavigateTo($"/Posts/{postId}");
     }
 }
