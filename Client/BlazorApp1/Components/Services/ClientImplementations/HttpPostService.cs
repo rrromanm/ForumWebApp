@@ -9,13 +9,12 @@ namespace BlazorApp1.Components.Services.ClientImplementations;
 public class HttpPostService : IPostService
 {
     private readonly HttpClient client;
-    
+
     public HttpPostService(HttpClient client)
     {
         this.client = client;
     }
-    
-    
+
     public async Task CreateAsync(AddPostDTO dto)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync("https://localhost:7078/Posts", dto);
@@ -26,23 +25,22 @@ public class HttpPostService : IPostService
         }
     }
 
-    public async Task<ICollection<Post>> GetPostsAsync(string? titleContains, string? contentContains, string? username)
+    public async Task<ICollection<PostDTO>> GetPostsAsync()
     {
-        string query = ConstructQuery(titleContains, contentContains, username);
-        HttpResponseMessage response = await client.GetAsync("https://localhost:7078/Posts" + query);
+        HttpResponseMessage response = await client.GetAsync("https://localhost:7078/Posts");
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(content);
         }
         
-        ICollection<Post> posts = JsonSerializer.Deserialize<ICollection<Post>>(content, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ICollection<PostDTO>>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         })!;
-        return posts;
     }
 
+<<<<<<< Updated upstream
     public async Task<PostWithCommentsDTO> GetPostByIdAsync(int id)
     {
         HttpResponseMessage response = await client.GetAsync($"https://localhost:7078/Posts/{id}");
@@ -92,22 +90,20 @@ public class HttpPostService : IPostService
     }
 
     private string ConstructQuery(string? titleContains, string? contentContains, string? username)
+=======
+    public async Task<PostDTO> GetPostByIdAsync(int postId)
+>>>>>>> Stashed changes
     {
-        string query = "";
-        if (titleContains != null)
+        HttpResponseMessage response = await client.GetAsync($"https://localhost:7078/Posts/{postId}");
+        string content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
         {
-            query += $"titleContains={titleContains}&";
+            throw new Exception(content);
         }
 
-        if (contentContains != null)
+        return JsonSerializer.Deserialize<PostDTO>(content, new JsonSerializerOptions
         {
-            query += $"contentContains={contentContains}&";
-        }
-        if (username != null)
-        {
-            query += $"username={username}&";
-        }
-
-        return query;
+            PropertyNameCaseInsensitive = true
+        })!;
     }
 }

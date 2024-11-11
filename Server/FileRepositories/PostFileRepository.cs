@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using DTOs.Post;
 using Entities;
 using RepositoryContracts;
 

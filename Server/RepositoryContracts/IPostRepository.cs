@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using DTOs.Post;
+using Entities;
 
 namespace RepositoryContracts;
 

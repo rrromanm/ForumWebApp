@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
                 return Results.NotFound($"User with ID '{request.UserId}' not found.");
             }
 
-            var post = new Post
+            var post = new Post()
             {
                 Title = request.Title,
                 Body = request.Body,

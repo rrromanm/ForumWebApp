@@ -1,6 +1,6 @@
 ﻿@page "/ViewPosts"
 @using BlazorApp1.Components.Services.ClientInterfaces
-@using Entities
+@using DTOs.Post
 @inject IPostService postService
 @inject IUserService userService
 
@@ -33,18 +33,19 @@ else
 }
 
 @code {
-private ICollection<Post> posts;
+private ICollection<PostDTO> posts;
 private Dictionary<int, string> usernames = new Dictionary<int, string>();
 
-protected override async Task OnInitializedAsync()
-{
-posts = await postService.GetPostsAsync(null, null, null);
-foreach (var post in posts)
-{
-if (!usernames.ContainsKey(post.UserId))
-{
-usernames[post.UserId] = await userService.GetUserNameAsync(post.UserId);
-}
-}
-}
+    protected override async Task OnInitializedAsync()
+    {
+    posts = await postService.GetPostsAsync();
+    foreach (var post in posts)
+    {
+        if (!usernames.ContainsKey(post.UserId))
+        {
+            var user = await userService.GetUserNameAsync(post.UserId);
+            usernames[post.UserId] = user.Username;
+        }
+    }
+    }
 }
