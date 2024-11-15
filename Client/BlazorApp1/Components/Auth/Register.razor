@@ -42,7 +42,6 @@
         {
             await ((SimpleAuthProvider)AuthProvider).Register(username, password);
             navMgr.NavigateTo("/");
-            navMgr.NavigateTo("/login");
         }
         catch (Exception ex)
         {

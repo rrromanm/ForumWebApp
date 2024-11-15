@@ -1,17 +1,1 @@
-[
-  {"Id": 1, "Username": "user", "Password": "user"},
-  {"Id": 2, "Username": "rrromanm", "Password": "roma11roma"},
-  {"Id": 3, "Username": "johndoe", "Password": "password123"},
-  {"Id": 4, "Username": "janedoe", "Password": "mysecurepassword"},
-  {"Id": 5, "Username": "alice123", "Password": "alicepass"},
-  {"Id": 6, "Username": "bobthebuilder", "Password": "bobbuilds"},
-  {"Id": 7, "Username": "charliebrown", "Password": "peanuts21"},
-  {"Id": 8, "Username": "david007", "Password": "secretagent007"},
-  {"Id": 9, "Username": "emilyrose", "Password": "rosesandthorns"},
-  {"Id": 10, "Username": "franklin56", "Password": "franklyspeaking"},
-  {"Id": 11, "Username": "gracehopper", "Password": "grace123"},
-  {"Id": 12, "Username": "hannahbanana", "Password": "yellowfruit"},
-  {"Id": 13, "Username": "igor123", "Password": "frankenstein"},
-  {"Id": 14, "Username": "jasmine17", "Password": "flowerpower"},
-  {"Id": 15, "Username": "kevinrock", "Password": "rockstar123"}
-]
+[{"Id":1,"Username":"user","Password":"user"},{"Id":2,"Username":"rrromanm","Password":"roma11roma"},{"Id":3,"Username":"johndoe","Password":"password123"},{"Id":4,"Username":"janedoe","Password":"mysecurepassword"},{"Id":5,"Username":"alice123","Password":"alicepass"},{"Id":6,"Username":"bobthebuilder","Password":"bobbuilds"},{"Id":7,"Username":"charliebrown","Password":"peanuts21"},{"Id":8,"Username":"david007","Password":"secretagent007"},{"Id":9,"Username":"emilyrose","Password":"rosesandthorns"},{"Id":10,"Username":"franklin56","Password":"franklyspeaking"},{"Id":11,"Username":"gracehopper","Password":"grace123"},{"Id":12,"Username":"hannahbanana","Password":"yellowfruit"},{"Id":13,"Username":"igor123","Password":"frankenstein"},{"Id":14,"Username":"jasmine17","Password":"flowerpower"},{"Id":15,"Username":"kevinrock","Password":"rockstar123"},{"Id":16,"Username":"Marat","Password":"12345"}]

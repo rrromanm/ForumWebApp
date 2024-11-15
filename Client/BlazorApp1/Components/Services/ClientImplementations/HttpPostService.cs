@@ -9,13 +9,12 @@ namespace BlazorApp1.Components.Services.ClientImplementations;
 public class HttpPostService : IPostService
 {
     private readonly HttpClient client;
-    
+
     public HttpPostService(HttpClient client)
     {
         this.client = client;
     }
-    
-    
+
     public async Task CreateAsync(AddPostDTO dto)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync("https://localhost:7078/Posts", dto);
@@ -35,7 +34,7 @@ public class HttpPostService : IPostService
         {
             throw new Exception(content);
         }
-        
+
         ICollection<Post> posts = JsonSerializer.Deserialize<ICollection<Post>>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -47,7 +46,6 @@ public class HttpPostService : IPostService
     {
         HttpResponseMessage response = await client.GetAsync($"https://localhost:7078/Posts/{id}");
         string content = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"API Response: {content}");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(content);
@@ -90,7 +88,6 @@ public class HttpPostService : IPostService
             throw new Exception("Error adding comment: " + ex.Message, ex);
         }
     }
-
     private string ConstructQuery(string? titleContains, string? contentContains, string? username)
     {
         string query = "";

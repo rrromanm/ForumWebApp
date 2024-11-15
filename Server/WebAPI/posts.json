@@ -8,7 +8,7 @@
   {
     "Id": 2,
     "Title": "New Project Ideas",
-    "Body": "Brainstorming for the next big thing! The world is full of opportunities to innovate. Whether it's technology, sustainability, or something creative, the possibilities are endless. It's time to think outside the box and come up with ideas that could change the game.",
+    "Body": "Brainstorming for the next big thing! The world is full of opportunities to innovate. Whether it\u0027s technology, sustainability, or something creative, the possibilities are endless. It\u0027s time to think outside the box and come up with ideas that could change the game.",
     "UserId": 3
   },
   {
@@ -20,13 +20,13 @@
   {
     "Id": 4,
     "Title": "Healthy Living Tips",
-    "Body": "Eat clean, stay fit, and be happy. Leading a healthy lifestyle goes beyond just working out. It's about nourishing your body with the right foods, managing stress, and getting enough rest. A holistic approach to health will keep you feeling energized and mentally sharp, helping you enjoy life to the fullest.",
+    "Body": "Eat clean, stay fit, and be happy. Leading a healthy lifestyle goes beyond just working out. It\u0027s about nourishing your body with the right foods, managing stress, and getting enough rest. A holistic approach to health will keep you feeling energized and mentally sharp, helping you enjoy life to the fullest.",
     "UserId": 5
   },
   {
     "Id": 5,
     "Title": "Weekend Plans",
-    "Body": "Looking forward to some outdoor activities this weekend! Whether it's hiking in the mountains, cycling through the city, or spending time at the beach, outdoor adventures are the perfect way to recharge. Nature has a way of soothing the mind and refreshing the spirit.",
+    "Body": "Looking forward to some outdoor activities this weekend! Whether it\u0027s hiking in the mountains, cycling through the city, or spending time at the beach, outdoor adventures are the perfect way to recharge. Nature has a way of soothing the mind and refreshing the spirit.",
     "UserId": 6
   },
   {
@@ -44,13 +44,7 @@
   {
     "Id": 8,
     "Title": "Fitness Journey",
-    "Body": "Tracking my workouts and progress this month. Fitness isn't just about how you look—it's about how you feel. This month, I’m focusing on increasing my strength and stamina. From cardio to weight training, every workout is a step toward a healthier, more resilient body. Staying consistent and measuring progress helps keep me motivated!",
+    "Body": "Tracking my workouts and progress this month. Fitness isn\u0027t just about how you look\u2014it\u0027s about how you feel. This month, I\u2019m focusing on increasing my strength and stamina. From cardio to weight training, every workout is a step toward a healthier, more resilient body. Staying consistent and measuring progress helps keep me motivated!",
     "UserId": 9
-  },
-  {
-    "Id": 9,
-    "Title": "Tech Innovation",
-    "Body": "How AI is reshaping industries and society. From self-driving cars to predictive analytics, AI is revolutionizing how businesses operate. Its potential to transform healthcare, education, and even entertainment is limitless. While AI opens up new possibilities, it also challenges us to rethink ethical considerations and the future of work.",
-    "UserId": 10
   }
 ]

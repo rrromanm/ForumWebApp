@@ -12,10 +12,10 @@ public class HttpUserService : IUserService
     {
         this.client = client;
     }
-    public async Task<string> GetUserNameAsync(int userId)
+    public async Task<UserDTO> GetUserNameAsync(int userId)
     {
         var response = await client.GetFromJsonAsync<UserDTO>($"https://localhost:7078/Users/{userId}");
-        return response?.Username ?? "Unknown";
+        return response ?? new UserDTO { Username = "Unknown" };
     }
     
     public Task<UserDTO> AddUserAsync(AddUserDTO addUserDto)
