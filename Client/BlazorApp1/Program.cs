@@ -19,6 +19,7 @@ builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

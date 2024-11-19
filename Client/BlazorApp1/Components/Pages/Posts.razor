@@ -31,6 +31,7 @@ else
     </ul>
 }
 
+
 @code {
     [Parameter]
     public int postId { get; set; }
@@ -50,18 +51,28 @@ else
     {
         AuthenticationState authenticationState = await State;
         ClaimsPrincipal claimsPrincipal = authenticationState.User;
+
         if (claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
         {
             return;
         }
+
         IEnumerable<Claim> claims = claimsPrincipal.Claims;
         string userIdAsString = claims.Single(c => c.Type == "Id").Value;
         userId = int.Parse(userIdAsString);
 
+        // Fetch post with comments
         postWithComments = await PostService.GetPostByIdAsync(postId);
+        if (postWithComments == null)
+        {
+            // Handle the case where no post is returned
+            return;
+        }
+
         var user = await UserService.GetUserNameAsync(postWithComments.Post.UserId);
         username = user.Username;
 
+        // Fetch usernames for comments
         foreach (var comment in postWithComments.Comments)
         {
             if (!commentUsernames.ContainsKey(comment.UserId))
@@ -73,6 +84,7 @@ else
 
         StateHasChanged(); // Ensure the component re-renders
     }
+
 
     private async Task AddComment()
     {
@@ -83,10 +95,16 @@ else
             Body = newCommentBody
         };
 
+        // Call the service to add the comment
         await PostService.AddCommentAsync(newComment);
+
+        // Refresh comments for the post
         postWithComments.Comments = await PostService.GetCommentsAsync(postId);
+    
+        // Clear the input field after submission
         newCommentBody = string.Empty;
 
+        // Ensure all user names are mapped to comments
         foreach (var comment in postWithComments.Comments)
         {
             if (!commentUsernames.ContainsKey(comment.UserId))
@@ -96,6 +114,7 @@ else
             }
         }
 
-        StateHasChanged(); // Ensure the component re-renders
+        StateHasChanged(); // Force a re-render
     }
+
 }

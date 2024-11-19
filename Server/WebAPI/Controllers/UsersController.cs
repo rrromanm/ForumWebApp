@@ -31,16 +31,12 @@ namespace WebAPI.Controllers
             }
 
             // Create the new user
-            var user = new User
-            {
-                Username = request.username,
-                Password = request.password,
-                Id = request.Id
-            };
+            var user = new User(request.username, request.password, request.Id);
 
             await _userRepository.AddAsync(user);
             return Results.Created($"users/{user.Id}", user);
         }
+
 
         // PUT localhost:7078/users/{id}
         [HttpPut("{id:int}")]

@@ -23,23 +23,24 @@ namespace WebAPI.Controllers
 
         // POST localhost:7078/posts
         [HttpPost]
-        public async Task<IResult> CreatePostAsync([FromBody] AddPostDTO request)
+        public async Task<IActionResult> CreatePostAsync(AddPostDTO request)
         {
-            var existingUser = await _userRepository.GetSingleAsync(request.UserId);
-            if (existingUser == null)
-            {
-                return Results.NotFound($"User with ID '{request.UserId}' not found.");
-            }
-
-            var post = new Post()
+            var post = new Post
             {
                 Title = request.Title,
                 Body = request.Body,
-                UserId = request.UserId
+                UserId = request.UserId // Ensure UserId is assigned
             };
 
-            await _postRepository.AddAsync(post);
-            return Results.Created($"posts/{post.Id}", post);
+            try
+            {
+                var createdPost = await _postRepository.AddAsync(post);
+                return Ok(createdPost);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT localhost:7078/posts/{id}

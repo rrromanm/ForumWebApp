@@ -20,33 +20,30 @@ namespace WebAPI.Controllers
             _userRepository = userRepository;
             _postRepository = postRepository;
         }
-
-        // POST localhost:7078/comments
+        
         [HttpPost]
-        public async Task<IResult> CreateCommentAsync([FromBody] AddComentDTO    request)
+        public async Task<IActionResult> CreateCommentAsync([FromBody] AddComentDTO request)
         {
-            var existingPost = await _postRepository.GetSingleAsync(request.PostId);
-            var existingUser = await _userRepository.GetSingleAsync(request.UserId);
-
-            if (existingPost == null)
-            {
-                return Results.NotFound($"Post with ID '{request.PostId}' not found.");
-            }
-
-            if (existingUser == null)
-            {
-                return Results.NotFound($"User with ID '{request.UserId}' not found.");
-            }
-
             var comment = new Comment
             {
                 Body = request.Body,
-                UserId = request.UserId,
-                PostId = request.PostId
+                PostId = request.PostId,
+                UserId = request.UserId
             };
-            await _commentRepository.AddAsync(comment);
-            return Results.Created($"comments/{comment.Id}", comment);
+
+            try
+            {
+                var createdComment = await _commentRepository.AddAsync(comment);
+                return Ok(createdComment);  // Return the created comment
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);  // Handle the error if PostId or UserId is invalid
+            }
         }
+
+
+
 
         // PUT localhost:7078/comments/{id}
         [HttpPut("{id:int}")]
@@ -58,13 +55,7 @@ namespace WebAPI.Controllers
                 return Results.NotFound($"Comment with ID {id} not found.");
             }
 
-            var comment = new Comment
-            {
-                Id = id,
-                Body = request.Body,
-                UserId = existingComment.UserId,
-                PostId = existingComment.PostId
-            };
+            var comment = new Comment(request.Body, existingComment.UserId, existingComment.PostId); //removed id
             await _commentRepository.UpdateAsync(comment);
             return Results.Ok(comment);
         }
