@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorApp1.Components.Auth
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthProvider
 <div class="page">
     <div class="sidebar">
         <NavMenu/>
@@ -6,7 +8,11 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <a href="#" @onclick="Logout">Logout</a>
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -14,3 +20,10 @@
         </article>
     </main>
 </div>
+
+@code {
+    private async Task Logout()
+    {
+        await ((SimpleAuthProvider)AuthProvider).Logout();
+    }
+}
