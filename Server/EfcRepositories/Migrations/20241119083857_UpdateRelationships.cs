@@ -10,6 +10,7 @@ namespace EfcRepositories.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("PRAGMA foreign_keys = 0;");
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
                 table: "Posts",
@@ -53,6 +54,7 @@ namespace EfcRepositories.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("PRAGMA foreign_keys = 1;");
             migrationBuilder.DropForeignKey(
                 name: "FK_Comments_Posts_PostId",
                 table: "Comments");

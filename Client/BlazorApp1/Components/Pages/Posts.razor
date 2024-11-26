@@ -40,12 +40,12 @@ else
     public Task<AuthenticationState> State { get; set; }
 
     private PostWithCommentsDTO postWithComments;
-    
     private string newCommentBody;
     private string username;
     private int userId;
-    
+
     private Dictionary<int, string> commentUsernames = new Dictionary<int, string>();
+    private bool isLoading = true; // Add a loading state flag
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,6 +54,7 @@ else
 
         if (claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
         {
+            isLoading = false; // No need to load further
             return;
         }
 
@@ -65,7 +66,7 @@ else
         postWithComments = await PostService.GetPostByIdAsync(postId);
         if (postWithComments == null)
         {
-            // Handle the case where no post is returned
+            isLoading = false; // Mark loading as complete even if no post is found
             return;
         }
 
@@ -82,8 +83,10 @@ else
             }
         }
 
+        isLoading = false; // Mark loading as complete
         StateHasChanged(); // Ensure the component re-renders
     }
+
 
 
     private async Task AddComment()

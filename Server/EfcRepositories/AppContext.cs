@@ -8,12 +8,12 @@ public class AppContext : DbContext
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Comment> Comments => Set<Comment>();
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(@"Data Source = C:\\Users\\romam\\RiderProjects\\forum-app\\Server\\EfcRepositories\\forum.db");
+        optionsBuilder.UseSqlite(@"Data Source=../EfcRepositories/forumapp.db");
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Post>()
@@ -31,5 +31,4 @@ public class AppContext : DbContext
             .WithMany(u => u.Comments)
             .HasForeignKey(c => c.UserId);
     }
-
 }

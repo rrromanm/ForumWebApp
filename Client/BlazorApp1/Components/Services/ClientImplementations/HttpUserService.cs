@@ -14,7 +14,7 @@ public class HttpUserService : IUserService
     }
     public async Task<UserDTO> GetUserNameAsync(int userId)
     {
-        var response = await client.GetFromJsonAsync<UserDTO>($"https://localhost:7078/Users/{userId}");
+        var response = await client.GetFromJsonAsync<UserDTO>($"/Users/{userId}");
         return response ?? new UserDTO { Username = "Unknown" };
     }
     
